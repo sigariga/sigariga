@@ -1,4 +1,4 @@
-- 👋 Hi, I’m @sigariga
+- 👋 Hi, I’m @ahmad
 - 👀 I’m interested in vision application, machine learning and data analytics
 - 🌱 I’m currently learning to assimilate machine learning into industry automation
 - 💞️ I’m looking to collaborate on new technology adoption
