@@ -13,14 +13,24 @@ A comprehensive application for analyzing PDF technical drawings, identifying di
 
 ## Installation
 
-### Quick Installation
-Run the installation script:
+### 🪟 Windows Installation
+
+**Quick Setup:**
+1. Double-click `install.bat` (handles everything automatically)
+2. If Tesseract OCR is missing, download from: https://github.com/UB-Mannheim/tesseract/wiki
+3. Double-click `run_app.bat` to start the application
+
+**Detailed Guide:** See [WINDOWS_INSTALL.md](WINDOWS_INSTALL.md) for complete instructions.
+
+### 🐧 Linux Installation
+
+**Quick Installation:**
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
 
-### Manual Installation
+**Manual Installation:**
 
 1. **System Dependencies** (Ubuntu/Debian):
 ```bash
@@ -30,6 +40,17 @@ sudo apt-get install python3-tk tesseract-ocr tesseract-ocr-eng libgl1-mesa-glx
 
 2. **Python Dependencies**:
 ```bash
+pip3 install -r requirements.txt
+```
+
+### 🍎 macOS Installation
+
+**Using Homebrew:**
+```bash
+# Install dependencies
+brew install python-tk tesseract
+
+# Install Python packages
 pip3 install -r requirements.txt
 ```
 
