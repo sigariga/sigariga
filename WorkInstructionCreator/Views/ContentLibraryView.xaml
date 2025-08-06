@@ -1,0 +1,215 @@
+<UserControl x:Class="WorkInstructionCreator.Views.ContentLibraryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="300">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search -->
+        <TextBox Grid.Row="0" 
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{StaticResource MaterialDesignFilledTextBox}"
+                 materialDesign:HintAssist.Hint="Search content..."
+                 Margin="8">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding ApplyFiltersCommand}"/>
+            </TextBox.InputBindings>
+        </TextBox>
+
+        <!-- Filters -->
+        <Grid Grid.Row="1" Margin="8,0,8,8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ComboBox Grid.Column="0" 
+                      ItemsSource="{Binding Categories}"
+                      SelectedItem="{Binding SelectedCategory}"
+                      Style="{StaticResource MaterialDesignFilledComboBox}"
+                      materialDesign:HintAssist.Hint="Category"
+                      Margin="0,0,4,0"/>
+
+            <ComboBox Grid.Column="1" 
+                      ItemsSource="{Binding ContentTypes}"
+                      SelectedItem="{Binding SelectedContentType}"
+                      Style="{StaticResource MaterialDesignFilledComboBox}"
+                      materialDesign:HintAssist.Hint="Type"
+                      Margin="4,0,0,0"/>
+        </Grid>
+
+        <!-- Content List -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding FilteredContentItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card Margin="8,4" 
+                                           Cursor="Hand"
+                                           materialDesign:ShadowAssist.ShadowDepth="Depth1">
+                            <materialDesign:Card.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" 
+                                            Command="{Binding DataContext.SelectContentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                            </materialDesign:Card.InputBindings>
+                            
+                            <Border Padding="12">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Header -->
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" 
+                                                 Text="{Binding Type, Converter={StaticResource ContentTypeToIconConverter}}"
+                                                 FontSize="16"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,8,0"/>
+
+                                        <TextBlock Grid.Column="1" 
+                                                 Text="{Binding Title}"
+                                                 FontWeight="Bold"
+                                                 FontSize="13"
+                                                 TextWrapping="Wrap"
+                                                 VerticalAlignment="Center"/>
+
+                                        <Button Grid.Column="2" 
+                                              Style="{StaticResource MaterialDesignIconButton}"
+                                              ToolTip="Delete Content"
+                                              Command="{Binding DataContext.DeleteContentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                            <materialDesign:PackIcon Kind="Delete" 
+                                                                   Foreground="{DynamicResource MaterialDesignValidationError}"
+                                                                   Width="16" Height="16"/>
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- Category & Type -->
+                                    <StackPanel Grid.Row="1" 
+                                              Orientation="Horizontal"
+                                              Margin="0,4,0,0">
+                                        <Border Background="{Binding Type, Converter={StaticResource ContentTypeToColorConverter}}"
+                                              CornerRadius="8" 
+                                              Padding="6,2"
+                                              Margin="0,0,4,0">
+                                            <TextBlock Text="{Binding Category}" 
+                                                     FontSize="9" 
+                                                     Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        </Border>
+                                        
+                                        <Border Background="{DynamicResource MaterialDesignChipBackground}"
+                                              CornerRadius="8" 
+                                              Padding="6,2">
+                                            <TextBlock Text="{Binding Type}" 
+                                                     FontSize="9" 
+                                                     Foreground="{DynamicResource MaterialDesignBody}"/>
+                                        </Border>
+                                    </StackPanel>
+
+                                    <!-- Description -->
+                                    <TextBlock Grid.Row="2" 
+                                             Text="{Binding Description}"
+                                             TextWrapping="Wrap"
+                                             FontSize="11"
+                                             Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                             Margin="0,4,0,8"
+                                             MaxHeight="40"
+                                             TextTrimming="CharacterEllipsis"/>
+
+                                    <!-- Tags -->
+                                    <ItemsControl Grid.Row="3" 
+                                                ItemsSource="{Binding Tags}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Background="{DynamicResource MaterialDesignDivider}"
+                                                      CornerRadius="6" 
+                                                      Padding="4,1"
+                                                      Margin="0,0,2,2">
+                                                    <TextBlock Text="{Binding}" 
+                                                             FontSize="8" 
+                                                             Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
+                            </Border>
+
+                            <!-- Hover Effect -->
+                            <materialDesign:Card.Style>
+                                <Style TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth3"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </materialDesign:Card.Style>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Loading Indicator -->
+        <ProgressBar Grid.Row="2" 
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Margin="8"/>
+
+        <!-- Empty State -->
+        <StackPanel Grid.Row="2" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding FilteredContentItems.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
+            <materialDesign:PackIcon Kind="LibraryBooks" 
+                                   Width="48" Height="48" 
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                   HorizontalAlignment="Center"/>
+            <TextBlock Text="No content found" 
+                     FontSize="16" 
+                     Foreground="{DynamicResource MaterialDesignBodyLight}"
+                     HorizontalAlignment="Center"
+                     Margin="0,8,0,0"/>
+            <TextBlock Text="Try adjusting your search or filters" 
+                     FontSize="12" 
+                     Foreground="{DynamicResource MaterialDesignBodyLight}"
+                     HorizontalAlignment="Center"
+                     Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Add Content Button -->
+        <Button Grid.Row="2" 
+                Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                Command="{Binding CreateNewContentCommand}"
+                ToolTip="Create New Content"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="16">
+            <materialDesign:PackIcon Kind="Plus"/>
+        </Button>
+    </Grid>
+</UserControl>
