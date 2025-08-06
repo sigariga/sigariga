@@ -1,0 +1,165 @@
+<UserControl x:Class="WorkInstructionCreator.Views.FlowchartSelectionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="300">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Search -->
+        <TextBox Grid.Row="0" 
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                 Style="{StaticResource MaterialDesignFilledTextBox}"
+                 materialDesign:HintAssist.Hint="Search flowcharts..."
+                 Margin="8">
+            <TextBox.InputBindings>
+                <KeyBinding Key="Enter" Command="{Binding ApplyFiltersCommand}"/>
+            </TextBox.InputBindings>
+        </TextBox>
+
+        <!-- Flowcharts List -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding FilteredFlowcharts}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <materialDesign:Card Margin="8,4" 
+                                           Cursor="Hand"
+                                           materialDesign:ShadowAssist.ShadowDepth="Depth1">
+                            <materialDesign:Card.InputBindings>
+                                <MouseBinding MouseAction="LeftClick" 
+                                            Command="{Binding DataContext.SelectFlowchartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
+                            </materialDesign:Card.InputBindings>
+                            
+                            <Border Padding="12">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Header -->
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <materialDesign:PackIcon Grid.Column="0" 
+                                                               Kind="FlowChart" 
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,8,0"/>
+
+                                        <TextBlock Grid.Column="1" 
+                                                 Text="{Binding Name}"
+                                                 FontWeight="Bold"
+                                                 FontSize="14"
+                                                 TextWrapping="Wrap"
+                                                 VerticalAlignment="Center"/>
+
+                                        <Button Grid.Column="2" 
+                                              Style="{StaticResource MaterialDesignIconButton}"
+                                              ToolTip="Delete Flowchart"
+                                              Command="{Binding DataContext.DeleteFlowchartCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                            <materialDesign:PackIcon Kind="Delete" 
+                                                                   Foreground="{DynamicResource MaterialDesignValidationError}"
+                                                                   Width="16" Height="16"/>
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- Description -->
+                                    <TextBlock Grid.Row="1" 
+                                             Text="{Binding Description}"
+                                             TextWrapping="Wrap"
+                                             FontSize="12"
+                                             Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                             Margin="0,4,0,8"/>
+
+                                    <!-- Node Count -->
+                                    <StackPanel Grid.Row="2" 
+                                              Orientation="Horizontal"
+                                              Margin="0,0,0,4">
+                                        <materialDesign:PackIcon Kind="Circle" 
+                                                               Width="12" Height="12"
+                                                               VerticalAlignment="Center"
+                                                               Margin="0,0,4,0"/>
+                                        <TextBlock Text="{Binding Nodes.Count, StringFormat='{0} nodes'}"
+                                                 FontSize="10"
+                                                 Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                                 VerticalAlignment="Center"/>
+                                    </StackPanel>
+
+                                    <!-- Created Date -->
+                                    <TextBlock Grid.Row="3" 
+                                             Text="{Binding CreatedDate, StringFormat='Created: {0:MM/dd/yyyy}'}"
+                                             FontSize="10"
+                                             Foreground="{DynamicResource MaterialDesignBodyLight}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Hover Effect -->
+                            <materialDesign:Card.Style>
+                                <Style TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="materialDesign:ShadowAssist.ShadowDepth" Value="Depth3"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </materialDesign:Card.Style>
+                        </materialDesign:Card>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Loading Indicator -->
+        <ProgressBar Grid.Row="1" 
+                     IsIndeterminate="True"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}"
+                     Margin="8"/>
+
+        <!-- Empty State -->
+        <StackPanel Grid.Row="1" 
+                    VerticalAlignment="Center" 
+                    HorizontalAlignment="Center"
+                    Visibility="{Binding FilteredFlowcharts.Count, Converter={StaticResource ZeroToVisibilityConverter}}">
+            <materialDesign:PackIcon Kind="FlowChart" 
+                                   Width="48" Height="48" 
+                                   Foreground="{DynamicResource MaterialDesignBodyLight}"
+                                   HorizontalAlignment="Center"/>
+            <TextBlock Text="No flowcharts found" 
+                     FontSize="16" 
+                     Foreground="{DynamicResource MaterialDesignBodyLight}"
+                     HorizontalAlignment="Center"
+                     Margin="0,8,0,0"/>
+            <TextBlock Text="Create a new flowchart to get started" 
+                     FontSize="12" 
+                     Foreground="{DynamicResource MaterialDesignBodyLight}"
+                     HorizontalAlignment="Center"
+                     Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <!-- Add Flowchart Button -->
+        <Button Grid.Row="1" 
+                Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                Command="{Binding CreateNewFlowchartCommand}"
+                ToolTip="Create New Flowchart"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                Margin="16">
+            <materialDesign:PackIcon Kind="Plus"/>
+        </Button>
+    </Grid>
+</UserControl>

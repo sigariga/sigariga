@@ -1,0 +1,171 @@
+<UserControl x:Class="WorkInstructionCreator.Views.EditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Formatting Toolbar -->
+        <Border Grid.Row="0" Background="{DynamicResource MaterialDesignToolBarBackground}" 
+                BorderBrush="{DynamicResource MaterialDesignDivider}" BorderThickness="0,0,0,1">
+            <ToolBarTray IsLocked="True">
+                <!-- Font Formatting -->
+                <ToolBar>
+                    <ComboBox ItemsSource="{Binding FontFamilies}" 
+                            SelectedItem="{Binding SelectedFontFamily}"
+                            Width="120" Margin="0,0,8,0"
+                            materialDesign:HintAssist.Hint="Font"/>
+                    
+                    <ComboBox ItemsSource="{Binding FontSizes}" 
+                            SelectedItem="{Binding SelectedFontSize}"
+                            Width="60" Margin="0,0,8,0"
+                            materialDesign:HintAssist.Hint="Size"/>
+                    
+                    <Separator/>
+                    
+                    <ToggleButton IsChecked="{Binding IsBold}" 
+                                Command="{Binding ToggleBoldCommand}"
+                                ToolTip="Bold (Ctrl+B)">
+                        <materialDesign:PackIcon Kind="FormatBold"/>
+                    </ToggleButton>
+                    
+                    <ToggleButton IsChecked="{Binding IsItalic}" 
+                                Command="{Binding ToggleItalicCommand}"
+                                ToolTip="Italic (Ctrl+I)">
+                        <materialDesign:PackIcon Kind="FormatItalic"/>
+                    </ToggleButton>
+                    
+                    <ToggleButton IsChecked="{Binding IsUnderline}" 
+                                Command="{Binding ToggleUnderlineCommand}"
+                                ToolTip="Underline (Ctrl+U)">
+                        <materialDesign:PackIcon Kind="FormatUnderline"/>
+                    </ToggleButton>
+                </ToolBar>
+
+                <!-- Lists and Structure -->
+                <ToolBar>
+                    <Button Command="{Binding InsertBulletListCommand}" ToolTip="Bullet List">
+                        <materialDesign:PackIcon Kind="FormatListBulleted"/>
+                    </Button>
+                    
+                    <Button Command="{Binding InsertNumberedListCommand}" ToolTip="Numbered List">
+                        <materialDesign:PackIcon Kind="FormatListNumbered"/>
+                    </Button>
+                    
+                    <Button Command="{Binding InsertTableCommand}" ToolTip="Insert Table">
+                        <materialDesign:PackIcon Kind="Table"/>
+                    </Button>
+                </ToolBar>
+
+                <!-- Special Content -->
+                <ToolBar>
+                    <Button Command="{Binding InsertSafetyNoteCommand}" ToolTip="Safety Note"
+                          Background="#FFF3CD" BorderBrush="#FFEAA7">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Alert" Margin="0,0,4,0"/>
+                            <TextBlock Text="Safety"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Command="{Binding InsertWarningNoteCommand}" ToolTip="Warning Note"
+                          Background="#F8D7DA" BorderBrush="#F5C6CB">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="AlertCircle" Margin="0,0,4,0"/>
+                            <TextBlock Text="Warning"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Command="{Binding InsertProcedureStepCommand}" ToolTip="Procedure Step">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ClipboardList" Margin="0,0,4,0"/>
+                            <TextBlock Text="Step"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Command="{Binding InsertChecklistCommand}" ToolTip="Checklist">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="CheckboxMarkedCircle" Margin="0,0,4,0"/>
+                            <TextBlock Text="Checklist"/>
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+        </Border>
+
+        <!-- Rich Text Editor -->
+        <Border Grid.Row="1" Background="White" Margin="8">
+            <Grid>
+                <!-- For a real implementation, you would use a proper rich text editor control like:
+                     - DevExpress RichEditControl
+                     - Syncfusion SfRichTextBoxAdv
+                     - Telerik RadRichTextBox
+                     - Custom HTML editor based on WebView2
+                     
+                     For this demo, we'll use a simple TextBox with HTML content -->
+                
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <TextBox Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"
+                           TextWrapping="Wrap" 
+                           AcceptsReturn="True"
+                           AcceptsTab="True"
+                           FontFamily="Segoe UI"
+                           FontSize="12"
+                           Padding="20"
+                           BorderThickness="0"
+                           Background="Transparent"
+                           VerticalAlignment="Stretch"
+                           HorizontalAlignment="Stretch"
+                           MinHeight="500"
+                           materialDesign:HintAssist.Hint="Start typing your work instruction content here..."
+                           materialDesign:HintAssist.IsFloating="False"/>
+                </ScrollViewer>
+
+                <!-- In a real application, this would be replaced with a proper rich text editor -->
+                <!-- Example of what a rich text editor integration might look like: -->
+                <!--
+                <syncfusion:SfRichTextBoxAdv x:Name="RichTextEditor"
+                                           DocumentSource="{Binding Content}"
+                                           EnableMiniToolBar="True"
+                                           EnableRuler="True"
+                                           LayoutType="Pages"
+                                           Margin="8"/>
+                -->
+
+                <!-- Placeholder for rich text editing functionality -->
+                <TextBlock Text="Rich Text Editor Area&#x0a;&#x0a;In a production application, this would be replaced with a full-featured rich text editor control such as:&#x0a;• Syncfusion SfRichTextBoxAdv&#x0a;• DevExpress RichEditControl&#x0a;• Telerik RadRichTextBox&#x0a;• Custom WebView2-based HTML editor&#x0a;&#x0a;The current TextBox provides basic text editing for demonstration purposes."
+                         Foreground="{DynamicResource MaterialDesignBodyLight}"
+                         FontStyle="Italic"
+                         Margin="20"
+                         TextWrapping="Wrap"
+                         VerticalAlignment="Top"
+                         IsHitTestVisible="False"
+                         Opacity="0.6"
+                         Visibility="{Binding Content, Converter={StaticResource StringToVisibilityConverter}}"/>
+            </Grid>
+        </Border>
+
+        <!-- Ruler (would be part of rich text editor) -->
+        <!-- 
+        <Border Grid.Row="1" VerticalAlignment="Top" Height="25" 
+                Background="{DynamicResource MaterialDesignPaper}"
+                BorderBrush="{DynamicResource MaterialDesignDivider}"
+                BorderThickness="0,0,0,1"
+                Margin="8,8,8,0">
+            <Canvas>
+                <TextBlock Text="Ruler would be here in a real rich text editor" 
+                         FontSize="10" 
+                         Foreground="{DynamicResource MaterialDesignBodyLight}"
+                         Canvas.Left="10" Canvas.Top="5"/>
+            </Canvas>
+        </Border>
+        -->
+    </Grid>
+</UserControl>
